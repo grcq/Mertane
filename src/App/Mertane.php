@@ -31,7 +31,7 @@ class Mertane {
         }
 
         $page = static::$pages[$pageRoute];
-        $request = new Request();
+        $request = new Request(explode("?", $_SERVER['REQUEST_URI'])[0]);
         $res = $page->index($request);
     }
 
