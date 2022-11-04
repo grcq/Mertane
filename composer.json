@@ -1,0 +1,23 @@
+{
+    "name": "mertane/mertane",
+    "description": "A software to help you code websites with PHP easier.",
+    "type": "project",
+    "require": {
+        "doctrine/annotations": "^1.13",
+        "doctrine/reflection": "^1.2",
+        "doctrine/common": "^3.4",
+        "smarty/smarty": "^4.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/App",
+            "Pages\\": "src/Pages"
+        }
+    },
+    "authors": [
+        {
+            "name": "grcq",
+            "email": "grcqbusiness@gmail.com"
+        }
+    ]
+}
