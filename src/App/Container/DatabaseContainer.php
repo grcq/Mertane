@@ -6,14 +6,33 @@ use App\Container\Container;
 
 class DatabaseContainer extends Container {
 
-    public function hi() 
+    private function connect()
     {
-        echo "AA";
+        # Setup config.
     }
 
-    public function e(): string
+    public function update(string $query): bool
     {
-        return "nn";
+
+    }
+
+    public function execute(string $query)
+    {
+        
+    }
+
+    public function select(string $table, array $select, array $where): array
+    {
+        $arr = [];
+        foreach ($vars as $key => $val)
+        {
+            array_push($arr, $key . "=" . $val);
+        }
+
+        $res = execute("SELECT " . implode(", ", $select) . " FROM " . $table . (empty($where) ? ";" : " WHERE " . implode(", ", $where) . ";"));
+        if ($res->num_rows === 0) return [];
+        
+        return $res->fetch_assoc();
     }
 
 }
