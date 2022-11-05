@@ -3,6 +3,8 @@
 namespace App;
 
 use App\Pages\Route;
+use App\Container\Container;
+use App\Container\DatabaseContainer;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
 
@@ -22,6 +24,8 @@ class Mertane {
 
         static::$smarty = new \Smarty();
         static::$smarty->setCompileDir(ROOT_PATH . "/cache/templates_c")->setTemplateDir(ROOT_PATH . "/cache/templates");
+
+        Container::registerContainer("database", new DatabaseContainer());
     }
 
     public function loadPage(string $pageRoute) {
@@ -31,7 +35,7 @@ class Mertane {
         }
 
         $page = static::$pages[$pageRoute];
-        $request = new Request(explode("?", $_SERVER['REQUEST_URI'])[0]);
+        $request = new Request(explode("?", $_SERVER['REQUEST_URI'])[0], static::$smarty);
         $res = $page->index($request);
     }
 

@@ -6,8 +6,16 @@ use App\Request;
 use App\Response\ResponseInterface;
 use App\Response\RedirectResponse;
 use App\Response\RenderResponse;
+use App\Container\Container;
 
 abstract class Page {
+
+    public Container $container;
+
+    public final function __construct()
+    {
+        $this->container = Container::init();
+    }
     
     abstract public function index(Request $request): ?ResponseInterface;
 

@@ -16,7 +16,6 @@ class HomePage extends Page {
      */
     public function index(Request $request): ?ResponseInterface
     {
-        echo "a";
         return new RenderResponse("index.tpl");
     }
 
