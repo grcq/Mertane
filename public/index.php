@@ -11,6 +11,7 @@ define("VERSION", "1.0.0");
 define("NAME", "Dev");
 
 use App\Mertane;
+use Pages\Error\ErrorPage;
 
 $mertane = new Mertane(NAME, VERSION);
 $mertane->registerPage("Pages\\HomePage");

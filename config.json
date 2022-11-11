@@ -1,0 +1,9 @@
+{
+    "api_key": "dev",
+    "database": {
+        "address": "127.0.0.1:3306",
+        "username": "grcq",
+        "password": "d4rtH341",
+        "database_name": "mertane"
+    }
+}

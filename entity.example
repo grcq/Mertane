@@ -1,0 +1,13 @@
+<?php
+
+namespace App\Entity;
+
+use App\Entity\EntityInterface;
+
+class {NAME} implements EntityInterface {
+
+    public function update(): void {
+        $this->container->get("database")->set(strtolower("{NAME}"), [], []);
+    }
+
+}

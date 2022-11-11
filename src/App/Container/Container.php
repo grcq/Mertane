@@ -14,7 +14,7 @@ class Container {
         return (isset(static::$containers[$container]) ? static::$containers[$container] : null);
     }
 
-    public static final function registerContainer(string $name, Container $container): void
+    public final function registerContainer(string $name, Container $container): void
     {
         static::$containers += ["$name" => $container];
     }

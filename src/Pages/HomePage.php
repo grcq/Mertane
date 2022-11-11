@@ -16,6 +16,9 @@ class HomePage extends Page {
      */
     public function index(Request $request): ?ResponseInterface
     {
+        $smarty = $request->getSmarty();
+        $smarty->assign("NAME", NAME);
+        $smarty->assign("ROOT_PATH", ROOT_PATH);
         return new RenderResponse("index.tpl");
     }
 

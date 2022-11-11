@@ -2,5 +2,4 @@
 
 namespace App\Response;
 
-interface ResponseInterface {
-}
+interface ResponseInterface {}

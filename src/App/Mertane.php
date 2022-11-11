@@ -2,9 +2,13 @@
 
 namespace App;
 
+use App\Pages\Page;
 use App\Pages\Route;
 use App\Container\Container;
+use App\Container\EntityContainer;
 use App\Container\DatabaseContainer;
+use App\Container\ConfigurationContainer;
+use Pages\Error\ErrorPage;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
 
@@ -16,21 +20,34 @@ class Mertane {
 
     private string $version;
 
+    private Container $container;
+
+    private ?Page $errorPage;
+
     protected static array $pages = [];
 
-    public function __construct(string $name, string $version) {
+    public function __construct(string $name, string $version) 
+    {
         $this->name = $name;
         $this->version = $version;
+
+        $this->container = Container::init();
+
+        $this->setErrorPage(new ErrorPage());
 
         static::$smarty = new \Smarty();
         static::$smarty->setCompileDir(ROOT_PATH . "/cache/templates_c")->setTemplateDir(ROOT_PATH . "/cache/templates");
 
-        Container::registerContainer("database", new DatabaseContainer());
+        $this->container->registerContainer("database", new DatabaseContainer());
+        $this->container->registerContainer("entity", new EntityContainer());
+        $this->container->registerContainer("config", new ConfigurationContainer());
     }
 
-    public function loadPage(string $pageRoute) {
-        if (!isset(static::$pages[$pageRoute])) {
-            echo "Error 404";
+    public function loadPage(string $pageRoute) 
+    {
+        if (!isset(static::$pages[$pageRoute])) 
+        {
+            $this->errorPage->index(new Request(explode("?", $_SERVER['REQUEST_URI'])[0], static::$smarty));
             return;
         }
 
@@ -39,7 +56,8 @@ class Mertane {
         $res = $page->index($request);
     }
 
-    public function registerPage(string $class) {
+    public function registerPage(string $class) 
+    {
         $page = new $class;
 
         AnnotationRegistry::registerLoader('class_exists');
@@ -50,6 +68,16 @@ class Mertane {
         $a = $reader->getMethodAnnotations($reflectionMethod)[0];
 
         static::$pages += ["$a->path" => $page];
+    }
+
+    public final function setErrorPage(Page $page): void
+    {
+        $this->errorPage = $page;
+    }
+
+    public final function getErrorPage(): ?Page
+    {
+        return $this->errorPage;
     }
 
 }

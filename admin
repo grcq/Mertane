@@ -1,0 +1,17 @@
+#!/usr/bin/env php
+
+<?php
+
+require_once 'vendor/autoload.php';
+
+define("ROOT_PATH", __DIR__);
+
+use App\Command\CommandHandler;
+use App\Command\Defaults\SetupDatabaseCommand;
+use App\Command\Defaults\CreateEntityCommand;
+
+$commandHandler = new CommandHandler($argc, $argv);
+$commandHandler->register(new SetupDatabaseCommand());
+$commandHandler->register(new CreateEntityCommand());
+
+return $commandHandler->run();
