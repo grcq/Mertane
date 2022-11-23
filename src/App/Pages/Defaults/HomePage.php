@@ -1,6 +1,6 @@
 <?php	
 
-namespace Pages;
+namespace App\Pages\Defaults;
 
 use App\Pages\Page;
 use App\Pages\Route;
@@ -18,8 +18,7 @@ class HomePage extends Page {
     {
         $smarty = $request->getSmarty();
         $smarty->assign("NAME", NAME);
-        $smarty->assign("ROOT_PATH", ROOT_PATH);
-        return new RenderResponse("index.tpl");
-    }
 
+        return new RenderResponse("@Default.index.tpl");
+    }
 }

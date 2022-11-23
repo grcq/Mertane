@@ -4,14 +4,16 @@ namespace App;
 
 class Request {
 
+    private array $data;
     private string $uri;
     private ?\Smarty $smarty;
     private ?object $class;
     private ?array $get;
     private ?array $post;
 
-    public function __construct(string $uri, ?\Smarty $smarty, ?object $class = null, ?array $get = null, ?array $post = null)
+    public function __construct(array $data, string $uri, ?\Smarty $smarty, ?object $class = null, ?array $get = null, ?array $post = null)
     {
+        $this->data = $data;
         $this->uri = $uri;
         $this->smarty = $smarty;
         $this->class = $class;
@@ -45,6 +47,11 @@ class Request {
     public function getSmarty(): ?\Smarty
     {
         return $this->smarty;
+    }
+
+    public function getData(): array
+    {
+        return $this->data;
     }
 
 }

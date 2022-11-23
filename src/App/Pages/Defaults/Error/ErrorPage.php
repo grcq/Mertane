@@ -1,6 +1,6 @@
 <?php
 
-namespace Pages\Error;
+namespace App\Pages\Defaults\Error;
 
 use App\Pages\Page;
 use App\Request;
@@ -11,7 +11,7 @@ class ErrorPage extends Page {
 
     public function index(Request $request): ?ResponseInterface
     {
-        return $this->render("error/404.tpl");
+        return $this->render("@Default.error/404.tpl");
     }
 
 }

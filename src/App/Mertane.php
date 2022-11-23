@@ -4,17 +4,19 @@ namespace App;
 
 use App\Pages\Page;
 use App\Pages\Route;
+use App\Pages\Defaults\Error\ErrorPage;
+use App\Exceptions\Exception;
 use App\Container\Container;
 use App\Container\EntityContainer;
 use App\Container\DatabaseContainer;
 use App\Container\ConfigurationContainer;
-use Pages\Error\ErrorPage;
+use App\Container\CacheContainer;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
 
 class Mertane {
 
-    public static \Smarty $smarty;
+    private static \Smarty $smarty;
 
     private string $name;
 
@@ -41,22 +43,49 @@ class Mertane {
         $this->container->registerContainer("database", new DatabaseContainer());
         $this->container->registerContainer("entity", new EntityContainer());
         $this->container->registerContainer("config", new ConfigurationContainer());
+        $this->container->registerContainer("cache", new CacheContainer());
     }
 
-    public function loadPage(string $pageRoute) 
+    public function loadPage(string $pageRoute, $data = []) 
     {
-        if (!isset(static::$pages[$pageRoute])) 
+        $a = explode(".", $pageRoute);
+        if ($a[count($a) - 1] == "css") 
         {
-            $this->errorPage->index(new Request(explode("?", $_SERVER['REQUEST_URI'])[0], static::$smarty));
+            echo file_get_contents($pageRoute);
+            header("Content-type: text/css");
             return;
         }
 
-        $page = static::$pages[$pageRoute];
-        $request = new Request(explode("?", $_SERVER['REQUEST_URI'])[0], static::$smarty);
-        $res = $page->index($request);
+        if (!isset(static::$pages[$pageRoute])) 
+        {
+            $this->errorPage->index(new Request($data, explode("?", $_SERVER['REQUEST_URI'])[0], static::$smarty));
+            return;
+        }
+
+        try {
+            $page = static::$pages[$pageRoute];
+            if ($page == null) throw new Exception("");
+
+            static::$smarty->assign("ROOT_PATH", ROOT_PATH);
+            static::$smarty->assign("LINKS", $page->getStyles());
+
+            $request = new Request($data, explode("?", $_SERVER['REQUEST_URI'])[0], static::$smarty);
+            $res = $page->index($request);
+        } catch (\Throwable $e) {
+            $vars = [
+                "error" => $e->getMessage(),
+                "code" => $e->getCode(),
+                "file" => $e->getFile(),
+                "line" => $e->getLine(),
+                "trace" => $e->getTrace(),
+                "traceString" => $e->getTraceAsString(),
+                "class" => get_class($e)
+            ];
+            $this->loadPage("/test", $vars);
+        }
     }
 
-    public function registerPage(string $class) 
+    public function registerPage($class) 
     {
         $page = new $class;
 
@@ -78,6 +107,16 @@ class Mertane {
     public final function getErrorPage(): ?Page
     {
         return $this->errorPage;
+    }
+
+    public static function setSmarty(\Smarty $smarty): void
+    {
+        static::$smarty = $smarty;
+    }
+
+    public static function getSmarty(): \Smarty
+    {
+        return static::$smarty;
     }
 
 }

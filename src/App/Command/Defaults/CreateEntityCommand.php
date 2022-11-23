@@ -32,8 +32,28 @@ class CreateEntityCommand extends Command {
             return;
         }
 
+        $fields = [];
+        $newField = $this->ask("Do you want to create a field for this entity?", "y");
+        if ($newField == "y")
+        {
+            $fields = $this->newField($fields);
+        }
+
+        $temp = [];
+        $gettersAndSetters = [];
+        foreach ($fields as $name => $value)
+        {
+            array_push($temp, "private " . $value . " $" . $name . ";");
+            array_push($gettersAndSetters, "public function " . ($value == "bool" || $value == "boolean" ? "is" : "get") . ucfirst($name) . "(): " . $value . "\n    {\n        return $" . "this->" . $name . ";\n    }");
+            array_push($gettersAndSetters, "public function set" . ucfirst($name) . "(" . $value . " $" . $name . "): void\n    {\n        $" . "this->" . $name . " = $" . $name . ";\n    }");
+        }
+
+        $fields = $temp;
+
         $file = fopen($filePath, "w");
         $entityExampleFile = str_replace("{NAME}", $entityName, file_get_contents(\ROOT_PATH . "/entity.example"));
+        $entityExampleFile = str_replace("{FIELDS}", (empty($fields) ? "" : implode("\n\n    ", $fields)), $entityExampleFile);
+        $entityExampleFile = str_replace("{GETTERSANDSETTERS}", (empty($gettersAndSetters) ? "" : implode("\n\n    ", $gettersAndSetters)), $entityExampleFile);
 
         fwrite($file, $entityExampleFile);
         fclose($file);
@@ -50,6 +70,22 @@ class CreateEntityCommand extends Command {
     public function getName(): string
     {
         return "entity:create";
+    }
+
+    private function newField(array $currentFields): array
+    {
+        $fieldName = $this->ask("Name of the field");
+        $fieldType = $this->ask("Type of the field", "string");
+
+        $currentFields += ["{$fieldName}" => $fieldType];
+
+        $anotherField = $this->ask("Do you want to add another field?", "y");
+        if ($anotherField == "y")
+        {
+            return $this->newField($currentFields);
+        }
+
+        return $currentFields;
     }
 
 }

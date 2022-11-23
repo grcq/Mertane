@@ -5,9 +5,13 @@ namespace App\Entity;
 use App\Entity\EntityInterface;
 
 class {NAME} implements EntityInterface {
+    
+    {FIELDS}
 
     public function update(): void {
-        $this->container->get("database")->set(strtolower("{NAME}"), [], []);
+        
     }
+
+    {GETTERSANDSETTERS}
 
 }
